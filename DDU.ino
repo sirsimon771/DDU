@@ -8,7 +8,6 @@
 Arduino_GFX *gfx = create_default_Arduino_GFX();
 #else /* !defined(DISPLAY_DEV_KIT) */
 
-
 Arduino_ESP32RGBPanel *bus = new Arduino_ESP32RGBPanel(
     GFX_NOT_DEFINED /* CS */, GFX_NOT_DEFINED /* SCK */, GFX_NOT_DEFINED /* SDA */,
     40 /* DE */, 41 /* VSYNC */, 39 /* HSYNC */, 42 /* PCLK */,
@@ -28,6 +27,32 @@ Arduino_RPi_DPI_RGBPanel *gfx = new Arduino_RPi_DPI_RGBPanel(
 /*******************************************************************************
  * End of Arduino_GFX setting
  ******************************************************************************/
+
+// function prototypes
+void generateData();
+
+
+struct{
+    unsigned int tOil;
+    unsigned int tFuel;
+    unsigned int tMot;
+    unsigned int pOil;
+    unsigned int pFuel;
+    unsigned int n;
+    char gear;
+    float ath;
+    unsigned int map;
+    char* mode;
+    unsigned int tc;
+    float lambda;
+    float uBatt;
+    unsigned int tBatt;
+}data;
+
+unsigned long refreshTimer = 0;
+
+
+
 
 void setup(void)
 {
@@ -54,4 +79,60 @@ void loop()
     gfx->println("Hello World!");
 
     delay(1000);
+}
+
+
+void generateData()
+{
+    // TODO Eastereggs einbauen
+    unsigned int tEnv = random(15, 35);
+
+    data.tFuel = min(tEnv + random(0, 15), 40);
+    data.tMot = min(tEnv + random(0, 95), 110);
+    data.tOil = min(data.tMot + random(0, 30), 130);
+
+    data.n = random(2000, 13000);
+    
+    data.pOil = round((data.n-2000)/11000 * 5 + 1);
+    data.pFuel = (random(388, 412) / 100.0f);
+
+    int gear_temp = random(0, 4);
+    switch (gear_temp){
+        case 0:
+            data.gear = 'N';
+            break;
+        case 1:
+            data.gear = '1';
+            break;
+        case 2:
+            data.gear = '2';
+            break;
+        case 3:
+            data.gear = '3';
+            break;
+        case 4:
+            data.gear = '4';
+            break;
+        default:
+            data.gear = 'N';
+            break;
+    }
+
+    data.ath = random(196, 1000) / 10.0f;
+    data.map = random(0, 4);
+    
+    int mode_temp = random(0, 10);
+    if(mode_temp < 8)
+    {
+        data.mode = "RACE";
+    }
+    else
+    {
+        data.mode = "TEST";
+    }
+
+    data.tc = random(0, 12);
+    data.lambda = random(9, 11) / 10.0f;
+    data.uBatt = random(132, 168) / 10.0f;
+    data.tBatt = min(tEnv + random(0, 15), 39);
 }

@@ -12,7 +12,7 @@
 #define DDU_BLACK   0x0000      // {000, 000, 000}
 #define DDU_GREEN   0x0780      // {000, 240, 000}
 #define RWU_PURPLE  0x61D6      // {102, 056, 182}
-#define RWU_CYAN    0x1369      // {000, 169, 206}
+#define RWU_CYAN    0x0559      // {000, 169, 206}
 
 #define DDU_BACKGROUND DDU_BLACK
 

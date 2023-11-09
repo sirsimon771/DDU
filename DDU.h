@@ -1,15 +1,15 @@
 
 // color definitions
 // TODO convert colors to hex values
-#define DDU_WHITE   0xffffff    // {255, 255, 255}
-#define DDU_GRAY    0x969696    // {150, 150, 150}
-#define DDU_YELLOW  0xFAF000    // {250, 240, 0}
-#define DDU_ORANGE  0xFF8200    // {255, 130, 0}
-#define DDU_RED     0xF00000    // {240, 0, 0}
-#define DDU_PURPLE  0xB400DC    // {180, 0, 220}
-#define DDU_CYAN    0x00BEFF    // {0, 190, 255}
-#define DDU_BLACK   0x000000    // {0, 0, 0}
-#define DDU_GREEN   0x00F000    // {0, 240, 0}
+#define DDU_WHITE   0xffff      // {255, 255, 255}
+#define DDU_GRAY    0x94b2      // {150, 150, 150}
+#define DDU_YELLOW  0xff80      // {250, 240, 0}
+#define DDU_ORANGE  0xfc00      // {255, 130, 0}
+#define DDU_RED     0xf000      // {240, 0, 0}
+#define DDU_PURPLE  0xb01b      // {180, 0, 220}
+#define DDU_CYAN    0x05ff      // {0, 190, 255}
+#define DDU_BLACK   0x0000      // {0, 0, 0}
+#define DDU_GREEN   0x0780      // {0, 240, 0}
 
 #define DDU_BACKGROUND DDU_BLACK
 

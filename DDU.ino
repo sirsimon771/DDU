@@ -1,6 +1,8 @@
 #include <Arduino_GFX_Library.h>
 #include <math.h>
+#include <stdint-gcc.h>
 #include "DDU.h"
+#include "Splashscreen.h"
 
 
 Arduino_ESP32RGBPanel *bus = new Arduino_ESP32RGBPanel(
@@ -279,6 +281,7 @@ void drawGear(char c)
     const int posY = screen->height()/2 - height/2;
     
     // TODO draw gear character
+
 }
 
 void drawPageIndicator()
@@ -297,30 +300,15 @@ void drawFrameLineWidth(int posX, int posY, int width, int height, int radius, i
 // draw FSTW logo splash screen and wait
 void drawSplashScreen()
 {
-    int size = 2;
-    int h = DDU_HEIGHT/2;
-    int w = DDU_WIDTH/2;
-    int oX = 46*size;
-    int oY = 28*size;
-    int len = 30;
+    screen->fillScreen(DDU_BACKGROUND);
 
-    screen->setTextColor(DDU_CYAN);
-    screen->setTextSize(8*size);
+    // move to center
+    int posX = DDU_WIDTH/2 - floor((splashLogo.width + splashText.width) / 2);
+    int posY = DDU_HEIGHT/2 - floor(splashLogo.height/2);
 
-    screen->setCursor((DDU_WIDTH/2) - (oX*2), (DDU_HEIGHT/2) - oY);
-    screen->print("FSTW");
-
-#ifdef DEBUG
-    // center crosshair
-    screen->drawLine(w, 0, w, DDU_HEIGHT, RED);
-    screen->drawLine(0, DDU_HEIGHT/2, DDU_WIDTH, DDU_HEIGHT/2, RED);
-
-    screen->drawLine(w-len, h-(oY), w+len*2, h-(oY), WHITE);    // top line
-    screen->drawLine(w-len, h+(oY), w+len*2, h+(oY), WHITE);    // bottom line
-
-    screen->drawLine(w-(oX*2), h-len, w-(oX*2), h+len, GREEN);  // left line
-    screen->drawLine(w+(oX*2), h-len, w+(oX*2), h+len, GREEN);  // right line
-#endif // ifdef DEBUG
+    // draw bitmaps to screen
+    screen->drawBitmap(posX, posY, splashLogo.pixel_data, splashLogo.width, splashLogo.height, RWU_PURPLE);
+    screen->drawBitmap(posY+splashLogo.width, posY, splashText.pixel_data, splashText.width, splashText.height, RWU_CYAN);
 
     delay(DDU_SPLASH_MS);
 }

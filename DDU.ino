@@ -1,4 +1,5 @@
 #include <Arduino_GFX_Library.h>
+#include <math.h>
 #include "DDU.h"
 
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
@@ -54,6 +55,12 @@ struct data{
     unsigned int tBatt;
 };
 
+// holds a single name-value pair
+struct value{
+    char* name;
+    char* value;
+};
+
 // holds number of values inside one frame
 struct frame{
     unsigned int numOfVals;
@@ -64,12 +71,6 @@ struct frame{
     unsigned int sizeX;
     unsigned int sizeY;
     struct value values[3];
-};
-
-// holds a single name-value pair
-struct value{
-    char* name;
-    char* value;
 };
 
 // holds one value in its own frame
@@ -87,7 +88,7 @@ struct frame temp;
 struct frame pres;
 struct valueFrame rpm;
 struct valueFrame ath;
-struct valueFrame map;
+struct valueFrame engineMap;
 struct valueFrame tc;
 struct valueFrame mode;
 struct valueFrame lam;
@@ -116,9 +117,9 @@ void setup(void)
 
 void loop()
 {
-    generateData();
+    //generateData();
 
-    refreshDisplay();
+    //refreshDisplay();
 
     delay(DDU_REFRESH_DELAY);
 }
@@ -164,7 +165,7 @@ void initStructs()
     ath = {"ATH", 0, DDU_WHITE, 1, 1, 1, 1};
 
     // map struct
-    map = {"MAP", 0, DDU_YELLOW, 1, 1, 1, 1};
+    engineMap = {"MAP", 0, DDU_YELLOW, 1, 1, 1, 1};
 
     // tc struct
     tc = {"TC", 0, DDU_RED, 1, 1, 1, 1};
@@ -200,9 +201,9 @@ void generateData()
 
     unsigned int tEnv = random(15, 35);
 
-    data.tFuel = min(tEnv + random(0, 15), 40);
-    data.tMot = min(tEnv + random(0, 95), 110);
-    data.tOil = min(data.tMot + random(0, 30), 130);
+    data.tFuel = min(tEnv + random(0, 15), (unsigned long)40);
+    data.tMot = min(tEnv + random(0, 95), (unsigned long)110);
+    data.tOil = min(data.tMot + random(0, 30), (unsigned long)130);
 
     data.n = random(2000, 13000);
     
@@ -247,27 +248,26 @@ void generateData()
     data.tc = random(0, 12);
     data.lambda = random(9, 11) / 10.0f;
     data.uBatt = random(132, 168) / 10.0f;
-    data.tBatt = min(tEnv + random(0, 15), 39);
-
+    data.tBatt = min(tEnv + random(0, 15), (unsigned long)39);
 
     // fill frame structs
-    temp.values[0].value = sprintf("%d", data.tMot);
-    temp.values[1].value = sprintf("%d", data.tFuel);
-    temp.values[2].value = sprintf("%d", data.tMot);
+    sprintf(temp.values[0].value, "%d", data.tMot);
+    sprintf(temp.values[1].value, "%d", data.tFuel);
+    sprintf(temp.values[2].value, "%d", data.tMot);
 
-    pres.values[0].value = sprintf("%0.02f", data.pOil);
-    pres.values[1].value = sprintf("%0.02f", data.pFuel);
+    sprintf(pres.values[0].value, "%0.02f", data.pOil);
+    sprintf(pres.values[1].value, "%0.02f", data.pFuel);
 
-    batt.values[0] = sprintf("%00.00f", data.uBatt);
-    batt.values[1] = sprintf("%d", data.tBatt);
+    sprintf(batt.values[0].value, "%00.00f", data.uBatt);
+    sprintf(batt.values[1].value, "%d", data.tBatt);
 
     // fill single value structs
-    rpm.value = sprintf("%d", data.n);
-    ath.value = sprintf("%00.0f", data.ath);
-    map.value = sprintf("%d", data.map);
-    tc.value = sprintf("%d", data.tc);
+    sprintf(rpm.value, "%d", data.n);
+    sprintf(ath.value, "%00.0f", data.ath);
+    sprintf(engineMap.value, "%d", data.map);
+    sprintf(tc.value, "%d", data.tc);
     mode.value = data.mode;
-    lam.value = sprintf("%0.00f", data.lambda);
+    sprintf(lam.value, "%0.00f", data.lambda);
 }
 
 // writes the values in data struct to their places on the screen

@@ -1,6 +1,5 @@
 
 // color definitions
-// TODO convert colors to hex values
 #define DDU_WHITE   0xffff      // {255, 255, 255}
 #define DDU_GRAY    0x94b2      // {150, 150, 150}
 #define DDU_YELLOW  0xff80      // {250, 240, 0}

@@ -39,7 +39,6 @@ struct data{
     unsigned int pOil;
     unsigned int pFuel;
     unsigned int n;
-    char gear;
     float ath;
     unsigned int map;
     char* mode;
@@ -87,6 +86,7 @@ struct valueFrame tc;
 struct valueFrame mode;
 struct valueFrame lam;
 struct frame batt;
+char gear;
 
 
 
@@ -103,7 +103,6 @@ void setup(void)
     drawSplashScreen();
 
     refreshDisplay();
-
 }
 
 void loop()
@@ -204,22 +203,22 @@ void generateData()
     int gear_temp = random(0, 4);
     switch (gear_temp){
         case 0:
-            data.gear = 'N';
+            gear = 'N';
             break;
         case 1:
-            data.gear = '1';
+            gear = '1';
             break;
         case 2:
-            data.gear = '2';
+            gear = '2';
             break;
         case 3:
-            data.gear = '3';
+            gear = '3';
             break;
         case 4:
-            data.gear = '4';
+            gear = '4';
             break;
         default:
-            data.gear = 'N';
+            gear = 'N';
             break;
     }
 
@@ -266,6 +265,15 @@ void refreshDisplay()
 {
     // TODO construct screen, draw Frames
     screen->fillScreen(DDU_BACKGROUND);
+
+#ifdef DEBUG
+    // center crosshair
+    screen->drawLine(DDU_WIDTH/2, 0, DDU_WIDTH/2, DDU_HEIGHT, RED);
+    screen->drawLine(0, DDU_HEIGHT/2, DDU_WIDTH, DDU_HEIGHT/2, RED);
+#endif // ifdef DEBUG
+
+    drawGear(gear);
+    drawPageIndicator();
 }
 
 void drawFrame(struct frame frame)
@@ -286,7 +294,14 @@ void drawGear(char c)
 
 void drawPageIndicator()
 {
-    // TODO draw three circles as page indicators, left one is WHITE, rest is GREY
+    // draw two circles as page indicators
+    int r = 4;
+    int posY = DDU_HEIGHT - 12;
+    int posX = DDU_WIDTH / 2;
+    int dX = 8;
+    int color = 80;
+    screen->fillCircle(posX-dX, posY, r, DDU_WHITE);
+    screen->fillCircle(posX+dX, posY, r, screen->color565(color, color, color));
 }
 
 void drawFrameLineWidth(int posX, int posY, int width, int height, int radius, int lineWidth, int color)

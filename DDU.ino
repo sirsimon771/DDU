@@ -33,12 +33,12 @@ void drawSplashScreen();
 
 
 // holds all the data
-struct data{
+struct Data{
     uint16_t tOil;
     uint16_t tFuel;
     uint16_t tMot;
-    uint16_t pOil;
-    uint16_t pFuel;
+    float pOil;
+    float pFuel;
     uint16_t n;
     float ath;
     uint16_t map;
@@ -197,18 +197,18 @@ void generateData()
     // TODO Eastereggs einbauen
 
     // calculate random data
-    struct data data;
+    struct Data data;
 
-    unsigned int tEnv = random(15, 35);
+    unsigned int tEnv = random(17, 28);
 
-    data.tFuel = min(tEnv + random(0, 15), (unsigned long)40);
-    data.tMot = min(tEnv + random(0, 95), (unsigned long)110);
-    data.tOil = min(data.tMot + random(0, 30), (long)130);
+    data.tFuel = min(tEnv + random(0, 15), (unsigned long)38);
+    data.tMot = min(tEnv + random(0, 65), (unsigned long)81);
+    data.tOil = min(data.tMot + random(0, 35), (long)107);
 
-    data.n = random(2000, 13000);
+    data.n = random(2500, 13000);
     
-    data.pOil = round((data.n-2000)/11000 * 5 + 1);
-    data.pFuel = (random(388, 412) / 100.0f);
+    data.pOil = (data.n<2000) ? 0.05 : floor(((data.n-2500)/10500 * (7.2-0.65) + 0.65)*100)/100.0;
+    data.pFuel = (random(488, 535) / 100.0f);
 
     int gear_temp = random(0, 4);
     switch (gear_temp){
@@ -232,7 +232,7 @@ void generateData()
             break;
     }
 
-    data.ath = random(196, 1000) / 10.0f;
+    data.ath = random(159, 1000) / 10.0f;
     data.map = random(0, 4);
     
     int mode_temp = random(0, 10);
@@ -246,7 +246,7 @@ void generateData()
     }
 
     data.tc = random(0, 12);
-    data.lambda = random(9, 11) / 10.0f;
+    data.lambda = random(8, 13) / 10.0f;
     data.uBatt = random(132, 168) / 10.0f;
     data.tBatt = min(tEnv + random(0, 15), (unsigned long)39);
 

@@ -25,6 +25,7 @@ Arduino_RPi_DPI_RGBPanel *screen = new Arduino_RPi_DPI_RGBPanel(
 void generateData();
 void refreshDisplay();
 void drawFrame(struct frame);
+void drawValueFrame(struct valueFrame);
 void drawGear(char);
 void drawPageIndicator();
 void drawFrameLineWidth(int, int, int, int, int, int, int);
@@ -33,19 +34,19 @@ void drawSplashScreen();
 
 // holds all the data
 struct data{
-    unsigned int tOil;
-    unsigned int tFuel;
-    unsigned int tMot;
-    unsigned int pOil;
-    unsigned int pFuel;
-    unsigned int n;
+    uint16_t tOil;
+    uint16_t tFuel;
+    uint16_t tMot;
+    uint16_t pOil;
+    uint16_t pFuel;
+    uint16_t n;
     float ath;
-    unsigned int map;
+    uint16_t map;
     char* mode;
-    unsigned int tc;
+    uint16_t tc;
     float lambda;
     float uBatt;
-    unsigned int tBatt;
+    uint16_t tBatt;
 };
 
 // holds a single name-value pair
@@ -56,13 +57,13 @@ struct value{
 
 // holds number of values inside one frame
 struct frame{
-    unsigned int numOfVals;
+    uint16_t numOfVals;
     char* title;
-    unsigned int color;
-    unsigned int posX;
-    unsigned int posY;
-    unsigned int sizeX;
-    unsigned int sizeY;
+    uint16_t color;
+    int posX;
+    int posY;
+    int sizeX;
+    int sizeY;
     struct value values[3];
 };
 
@@ -70,11 +71,11 @@ struct frame{
 struct valueFrame{
     char* title;
     char* value;
-    unsigned int color;
-    unsigned int posX;
-    unsigned int posY;
-    unsigned int sizeX;
-    unsigned int sizeY;
+    uint16_t color;
+    int posX;
+    int posY;
+    int sizeX;
+    int sizeY;
 };
 
 struct frame temp;
@@ -86,30 +87,36 @@ struct valueFrame tc;
 struct valueFrame mode;
 struct valueFrame lam;
 struct frame batt;
-char gear;
+char gear = 'N';
 
 
 
 void setup(void)
 {
+    // disable backlight
+    pinMode(TFT_BL, OUTPUT);
+    digitalWrite(TFT_BL, LOW);
+
     // init screen and draw background
     screen->begin();
     screen->fillScreen(DDU_BACKGROUND);
 
+    // define frame positions, colors etc.
+    initStructs();
+
     // enable backlight
-    pinMode(TFT_BL, OUTPUT);
+    delay(100);
     digitalWrite(TFT_BL, HIGH);
 
+    // show FSTW logo at startup
     drawSplashScreen();
-
-    refreshDisplay();
 }
 
 void loop()
 {
-    //generateData();
+    // generateData();
 
-    //refreshDisplay();
+    refreshDisplay();
 
     delay(DDU_REFRESH_MS);
 }
@@ -119,14 +126,17 @@ void initStructs()
 {
     struct value nullvalue = {"NULL", "0"};
 
+    int centerX = DDU_WIDTH/2;
+    int centerY = DDU_HEIGHT/2;
+
     // temps struct
     temp.numOfVals = 3;
     temp.title = "TEMP";
     temp.color = DDU_ORANGE;
-    temp.posX = 1;
-    temp.posY = 1;
-    temp.sizeX = 1;
-    temp.sizeY = 1;
+    temp.posX = centerX-(-55+110+16)-(58+16+90);
+    temp.posY = 15;
+    temp.sizeX = 144;
+    temp.sizeY = 54+54+25;
     struct value tFuel = {"FUEL", 0};
     struct value tMot = {"MOT", 0};
     struct value tOil = {"OIL", 0};
@@ -138,10 +148,10 @@ void initStructs()
     pres.numOfVals = 2;
     pres.title = "PRES";
     pres.color = DDU_CYAN;
-    pres.posX = 1;
-    pres.posY = 1;
-    pres.sizeX = 1;
-    pres.sizeY = 1;
+    pres.posX = centerX-(-55+110+16)-(58+16+90);
+    pres.posY = 15+54+25 + 54 + 25;
+    pres.sizeX = 58+16+90;
+    pres.sizeY = 90;
     struct value pOil = {"OIL", 0};
     struct value pFuel = {"FUEL", 0};
     pres.values[0] = pOil;
@@ -149,31 +159,31 @@ void initStructs()
     pres.values[2] = nullvalue;
 
     // rpm struct
-    rpm = {"RPM", 0, DDU_WHITE, 1, 1, 1, 1};
+    rpm = {"RPM", 0, DDU_WHITE, centerX-(-55+110+16)-(58+16+90)+144+16, 15, (centerX-55+110+16)-(centerX-(-55+110+16)-(58+16+90)+144+16)-16, 54};
 
     // ath struct
-    ath = {"ATH", 0, DDU_WHITE, 1, 1, 1, 1};
+    ath = {"ATH", 0, DDU_WHITE, centerX-(-55+110+16)-(58+16+90)+58+16+90+16, DDU_HEIGHT-24-52, (centerX-55+110+16)-(centerX-(-55+110+16)-(58+16+90)+58+16+90+16)-16, 52};
 
     // map struct
-    engineMap = {"MAP", 0, DDU_YELLOW, 1, 1, 1, 1};
+    engineMap = {"MAP", 0, DDU_YELLOW, centerX-55+110+16, 15, 58, 54};
 
     // tc struct
-    tc = {"TC", 0, DDU_RED, 1, 1, 1, 1};
+    tc = {"TC", 0, DDU_RED, centerX-55+110+16, 15+54+25, 58, 54};
 
     // mode struct
-    mode = {"MODE", 0, DDU_WHITE, 1, 1, 1, 1};
+    mode = {"MODE", 0, DDU_WHITE, centerX-55+110+16+58+16, 15, 90, 54};
 
     // lambda struct
-    lam = {"LAM", 0, DDU_PURPLE, 1, 1, 1, 1};
+    lam = {"LAM", 0, DDU_PURPLE, centerX-55+110+16+58+16, 15+54+25, 90, 54};
 
     // battery struct
     batt.numOfVals = 2;
     batt.title = "BATT";
     batt.color = DDU_GREEN;
-    batt.posX = 1;
-    batt.posY = 1;
-    batt.sizeX = 1;
-    batt.sizeY = 1;
+    batt.posX = centerX-55+110+16;
+    batt.posY = 15+54+25 + 54 + 25;
+    batt.sizeX = 58+16+90;
+    batt.sizeY = 90;
     struct value uBatt = {"VOLT", 0};
     struct value tBatt = {"TEMP", 0};
     batt.values[0] = uBatt;
@@ -193,7 +203,7 @@ void generateData()
 
     data.tFuel = min(tEnv + random(0, 15), (unsigned long)40);
     data.tMot = min(tEnv + random(0, 95), (unsigned long)110);
-    data.tOil = min(data.tMot + random(0, 30), (unsigned long)130);
+    data.tOil = min(data.tMot + random(0, 30), (long)130);
 
     data.n = random(2000, 13000);
     
@@ -263,7 +273,6 @@ void generateData()
 // writes the values in data struct to their places on the screen
 void refreshDisplay()
 {
-    // TODO construct screen, draw Frames
     screen->fillScreen(DDU_BACKGROUND);
 
 #ifdef DEBUG
@@ -274,22 +283,61 @@ void refreshDisplay()
 
     drawGear(gear);
     drawPageIndicator();
+
+    // draw frames
+    drawValueFrame(rpm);
+    drawValueFrame(ath);
+    drawValueFrame(engineMap);
+    drawValueFrame(tc);
+    drawValueFrame(mode);
+    drawValueFrame(lam);
+    drawFrame(temp);
+    drawFrame(pres);
+    drawFrame(batt);
 }
 
-void drawFrame(struct frame frame)
+void drawFrame(struct frame f)
 {
-    // TODO draw the frame, title and contained values
+    drawFrameLineWidth(f.posX, f.posY, f.sizeX, f.sizeY, FRAMERADIUS, FRAMELINEWIDTH, f.color);
+    // TODO draw title, value names and values
+}
+
+void drawValueFrame(struct valueFrame vF)
+{
+    drawFrameLineWidth(vF.posX, vF.posY, vF.sizeX, vF.sizeY, FRAMERADIUS, FRAMELINEWIDTH, vF.color);
+    // TODO draw title, value names and values
+    
+#ifdef DEBUG
+    int ch = screen->color565(0,25,0);
+    int cv = screen->color565(0,0,25);
+    screen->drawFastHLine(0, vF.posY, DDU_WIDTH, ch);
+    screen->drawFastHLine(0, vF.posY+vF.sizeY, DDU_WIDTH, ch);
+    screen->drawFastVLine(vF.posX, 0, DDU_HEIGHT, cv);
+    screen->drawFastVLine(vF.posX+vF.sizeX, 0, DDU_HEIGHT, cv);
+#endif // ifdef DEBUG 
 }
 
 void drawGear(char c)
 {
-    const int width = 40;
-    const int height = 80;
-    const int posX = screen->width()/2 - width/2;
-    const int posY = screen->height()/2 - height/2;
+    const int width = 50;
+    const int height = 70;
+    const int offsetY = -10;
+    const int posX = DDU_WIDTH/2 - width/2;
+    const int posY = DDU_HEIGHT/2 - height/2 + offsetY;
     
-    // TODO draw gear character
+    // TODO draw gear character with proper font
+    screen->setCursor(posX, posY);
+    screen->setTextColor(DDU_WHITE);
+    screen->setTextSize(10);
+    screen->print(c);
 
+#ifdef DEBUG
+    int c_ = screen->color565(25,25,25);
+    screen->drawFastHLine(0, DDU_HEIGHT/2-height/2+offsetY, DDU_WIDTH, c_);
+    screen->drawFastHLine(0, DDU_HEIGHT/2+height/2+offsetY, DDU_WIDTH, c_);
+    screen->drawFastVLine(DDU_WIDTH/2-width/2, 0, DDU_HEIGHT, c_);
+    screen->drawFastVLine(DDU_WIDTH/2+width/2, 0, DDU_HEIGHT, c_);
+#endif // ifdef DEBUG 
 }
 
 void drawPageIndicator()
@@ -299,8 +347,9 @@ void drawPageIndicator()
     int posY = DDU_HEIGHT - 12;
     int posX = DDU_WIDTH / 2;
     int dX = 8;
-    int color = 80;
+
     screen->fillCircle(posX-dX, posY, r, DDU_WHITE);
+    int color = 80;
     screen->fillCircle(posX+dX, posY, r, screen->color565(color, color, color));
 }
 
@@ -326,4 +375,6 @@ void drawSplashScreen()
     screen->drawBitmap(posY+splashLogo.width, posY, splashText.pixel_data, splashText.width, splashText.height, RWU_CYAN);
 
     delay(DDU_SPLASH_MS);
+    screen->fillScreen(DDU_BACKGROUND);
+    delay(300);
 }

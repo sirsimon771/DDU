@@ -29,3 +29,15 @@
 // geometric settings
 #define FRAMELINEWIDTH  3
 #define FRAMERADIUS     5
+
+// frame title text options
+#define FRAMETITLESIZE  4
+#define FRAMETITLEWIDTHFACTOR (FRAMETITLESIZE * 12) // TODO Font width scale?
+#define FRAMETITLEHEIGHT (FRAMETITLESIZE * 12)      // TODO Font height scale?
+#define FRAMETITLEBACKGROUNDOFFSET 5
+#define FRAMEPADDING 8
+
+// frame value text options
+#define FRAMEVALUESIZE  3
+#define FRAMEVALUEWIDTHFACTOR (FRAMEVALUESIZE * 8)  // TODO font width scale?
+#define FRAMEVALUEHEIGHT (FRAMEVALUESIZE * 8)       // TODO font height scale?

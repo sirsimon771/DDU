@@ -30,6 +30,10 @@ void drawGear(char);
 void drawPageIndicator();
 void drawFrameLineWidth(int, int, int, int, int, int, int);
 void drawSplashScreen();
+void drawFrameTitle(int , int, int, int, char*);
+void drawValueName(int, int, char*, int);
+void drawValueRight(int, int, char*);
+void drawValueCentered(int, int, char*);
 
 
 // holds all the data
@@ -100,6 +104,10 @@ void setup(void)
     // init screen and draw background
     screen->begin();
     screen->fillScreen(DDU_BACKGROUND);
+
+    // rotate screen and flush buffer
+    screen->setRotation(2);
+    screen->flush();
 
     // define frame positions, colors etc.
     initStructs();
@@ -296,17 +304,94 @@ void refreshDisplay()
     drawFrame(batt);
 }
 
+void drawFrameTitle(int posX, int posY, int sizeX, int sizeY, char* title)
+{
+    // calculate text start position
+    int textWidth = strlen(title) * FRAMETITLEWIDTHFACTOR;
+    int textposX = posX + (sizeX/2) - (textWidth/2);
+    int textposY = posY - FRAMETITLEHEIGHT;
+    
+    // draw text background box
+    int boxX = textposX - FRAMETITLEBACKGROUNDOFFSET;
+    int boxY = textposY - 1;
+    int boxW = textWidth + FRAMETITLEBACKGROUNDOFFSET;
+    int boxH = FRAMETITLEHEIGHT + 1;
+    screen->fillRect(boxX, boxY, boxW, boxH, DDU_BACKGROUND);
+    // TODO3 maybe draw small ellipses at the open frame ends around the title?
+
+    // print title text
+    screen->setCursor(textposX, textposY);
+    screen->setTextColor(DDU_WHITE);
+    screen->setTextSize(FRAMETITLESIZE);
+    screen->print(title);
+}
+
+void drawValueNamesAndValues(struct frame f)
+{
+    int n = f.numOfVals;
+
+    // calculate positions for all values
+    int posXName = f.posX + FRAMEPADDING;
+    int posXVal = f.posX + f.sizeX - FRAMEPADDING;
+    int posY = 0;
+    for (int i = 0; i < n; i++)
+    {
+        posY = f.posY + (f.sizeY/(n+1)) * (i+1);
+        drawValueName(posXName, posY, f.values[i].name, f.color);
+        drawValueRight(posXVal, posY, f.values[i].value);
+    }
+}
+
+void drawValueName(int posX, int posY, char* name, int color)
+{
+    // draw value name at the specified position, aligned to the left
+    int X = posX;
+    int Y = posY - (FRAMEVALUEHEIGHT / 2);
+    screen->setCursor(X, Y);
+    screen->setTextColor(color);
+    screen->setTextSize(FRAMEVALUESIZE);
+    screen->print(name);
+}
+
+void drawValueRight(int posX, int posY, char* value)
+{
+    // draw value at the specified position, aligned to the right
+    int X = posX - strlen(value) * FRAMEVALUEWIDTHFACTOR;
+    int Y = posY - (FRAMEVALUEHEIGHT / 2);
+    screen->setCursor(X, Y);
+    screen->setTextColor(DDU_WHITE);
+    screen->setTextSize(FRAMEVALUESIZE);
+    screen->print(value);
+}
+
+void drawValueCentered(int posX, int posY, char* value)
+{
+    // draw value at the specified center position
+    int X = posX - (strlen(value) * FRAMEVALUEWIDTHFACTOR / 2);
+    int Y = posY - (FRAMEVALUEHEIGHT / 2);
+    screen->setCursor(X, Y);
+    screen->setTextColor(DDU_WHITE);
+    screen->setTextSize(FRAMEVALUESIZE);
+    screen->print(value);
+}
+
 void drawFrame(struct frame f)
 {
     drawFrameLineWidth(f.posX, f.posY, f.sizeX, f.sizeY, FRAMERADIUS, FRAMELINEWIDTH, f.color);
+
     // TODO draw title, value names and values
+    drawFrameTitle(f.posX, f.posY, f.sizeX, f.sizeY, f.title);
+    drawValueNamesAndValues(f);
 }
 
 void drawValueFrame(struct valueFrame vF)
 {
     drawFrameLineWidth(vF.posX, vF.posY, vF.sizeX, vF.sizeY, FRAMERADIUS, FRAMELINEWIDTH, vF.color);
-    // TODO draw title, value names and values
-    
+
+    // draw title and value
+    drawFrameTitle(vF.posX, vF.posY, vF.sizeX, vF.sizeY, vF.title);
+    drawValueCentered(vF.posX+(vF.sizeX/2), vF.posY+(vF.sizeY/2), vF.value);
+
 #ifdef DEBUG
     int ch = screen->color565(0,25,0);
     int cv = screen->color565(0,0,25);

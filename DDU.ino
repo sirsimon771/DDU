@@ -105,7 +105,7 @@ void setup(void)
     screen->begin();
     screen->fillScreen(DDU_BACKGROUND);
 
-    // rotate screen and flush buffer
+    // TODO test: rotate screen and flush buffer
     screen->setRotation(2);
     screen->flush();
 
@@ -281,6 +281,7 @@ void generateData()
 // writes the values in data struct to their places on the screen
 void refreshDisplay()
 {
+    digitalWrite(TFT_BL, LOW);
     screen->fillScreen(DDU_BACKGROUND);
 
 #ifdef DEBUG
@@ -302,6 +303,30 @@ void refreshDisplay()
     drawFrame(temp);
     drawFrame(pres);
     drawFrame(batt);
+
+    // TODO get frame buffer, rotate, write back and turn backlight on again
+    uint16_t* buff = screen->getFramebuffer();
+    
+    screen->draw16bitBeRGBBitmap(0, 0, rotateBuffer(buff), DDU_WIDTH, DDU_HEIGHT);
+    digitalWrite(TFT_BL, HIGH);
+}
+
+uint16_t* rotateBuffer(uint16_t* buff)
+{
+    uint32_t len = sizeof(buff)/sizeof(buff[0]);
+    uint16_t out[len];
+    uint32_t outpos = 0;
+    int w = DDU_WIDTH;
+    int h = DDU_HEIGHT;
+
+    for(int y = 0; y < h; y++)
+    {
+        outpos = len - (w * y);
+        for(int x = 0; x < w; x++)
+        {
+            out[outpos-x] = buff[y+x];
+        }
+    }
 }
 
 void drawFrameTitle(int posX, int posY, int sizeX, int sizeY, char* title)

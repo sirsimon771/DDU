@@ -2,6 +2,7 @@
     "files.associations": {
         "*.json": "jsonc",
         "stdint.h": "c",
-        "stdint-gcc.h": "c"
+        "stdint-gcc.h": "c",
+        "cmath": "cpp"
     }
 }

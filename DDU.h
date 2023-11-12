@@ -1,5 +1,5 @@
 // debug mode on or off (draw some help-lines and stuff)
-#define DEBUG 1
+// #define DEBUG 1
 
 // color definitions
 #define DDU_WHITE   0xffff      // {255, 255, 255}
@@ -23,8 +23,8 @@
 #define DDU_WIDTH   480
 #define DDU_HEIGHT  272
 
-#define DDU_REFRESH_MS  60000
-#define DDU_SPLASH_MS   100
+#define DDU_REFRESH_MS  5000
+#define DDU_SPLASH_MS   1000
 
 // geometric settings
 #define FRAMELINEWIDTH  3

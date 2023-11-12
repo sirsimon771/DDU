@@ -3,6 +3,7 @@
         "*.json": "jsonc",
         "stdint.h": "c",
         "stdint-gcc.h": "c",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "cstring": "cpp"
     }
 }

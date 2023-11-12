@@ -93,10 +93,24 @@ struct valueFrame lam;
 struct frame batt;
 char gear = 'N';
 
+char rpmVal[6] =    "13000";
+char athVal[5] =    "18.4";
+char mapVal[2] =    "0";
+char tcVal[3] =     "12";
+char lamVal[5] =    "0.94";
+char tOilVal[3] =   "98";
+char tFuelVal[3] =  "19";
+char tMotVal[3] =   "74";
+char pOilVal[5] =   "4.31";
+char pFuelVal[5] =  "5.12";
+char uBattVal[5] =  "16.8";
+char tBattVal[3] =  "28";
 
 
 void setup(void)
 {
+    Serial.begin(9600);
+
     // disable backlight
     pinMode(TFT_BL, OUTPUT);
     digitalWrite(TFT_BL, LOW);
@@ -122,7 +136,7 @@ void setup(void)
 
 void loop()
 {
-    // generateData();
+    generateData();
 
     refreshDisplay();
 
@@ -145,9 +159,9 @@ void initStructs()
     temp.posY = 15;
     temp.sizeX = 144;
     temp.sizeY = 54+54+25;
-    struct value tFuel = {"FUEL", "19"};
-    struct value tMot = {"MOT", "74"};
-    struct value tOil = {"OIL", "98"};
+    struct value tFuel = {"FUEL", tFuelVal};
+    struct value tMot = {"MOT", tMotVal};
+    struct value tOil = {"OIL", tOilVal};
     temp.values[0] = tOil;
     temp.values[1] = tFuel;
     temp.values[2] = tMot;
@@ -160,29 +174,29 @@ void initStructs()
     pres.posY = 15+54+25 + 54 + 25;
     pres.sizeX = 58+16+90;
     pres.sizeY = 90;
-    struct value pOil = {"OIL", "4.31"};
-    struct value pFuel = {"FUEL", "5.12"};
+    struct value pOil = {"OIL", pOilVal};
+    struct value pFuel = {"FUEL", pFuelVal};
     pres.values[0] = pOil;
     pres.values[1] = pFuel;
     pres.values[2] = nullvalue;
 
     // rpm struct
-    rpm = {"RPM", "13000", DDU_WHITE, centerX-(-55+110+16)-(58+16+90)+144+16, 15, (centerX-55+110+16)-(centerX-(-55+110+16)-(58+16+90)+144+16)-16, 54};
+    rpm = {"RPM", rpmVal, DDU_WHITE, centerX-(-55+110+16)-(58+16+90)+144+16, 15, (centerX-55+110+16)-(centerX-(-55+110+16)-(58+16+90)+144+16)-16, 54};
 
     // ath struct
-    ath = {"ATH", "18.4", DDU_WHITE, centerX-(-55+110+16)-(58+16+90)+58+16+90+16, DDU_HEIGHT-24-52, (centerX-55+110+16)-(centerX-(-55+110+16)-(58+16+90)+58+16+90+16)-16, 52};
+    ath = {"ATH", athVal, DDU_WHITE, centerX-(-55+110+16)-(58+16+90)+58+16+90+16, DDU_HEIGHT-24-52, (centerX-55+110+16)-(centerX-(-55+110+16)-(58+16+90)+58+16+90+16)-16, 52};
 
     // map struct
-    engineMap = {"MAP", "0", DDU_YELLOW, centerX-55+110+16, 15, 58, 54};
+    engineMap = {"MAP", mapVal, DDU_YELLOW, centerX-55+110+16, 15, 58, 54};
 
     // tc struct
-    tc = {"TC", "12", DDU_RED, centerX-55+110+16, 15+54+25, 58, 54};
+    tc = {"TC", tcVal, DDU_RED, centerX-55+110+16, 15+54+25, 58, 54};
 
     // mode struct
     mode = {"MODE", "RACE", DDU_WHITE, centerX-55+110+16+58+16, 15, 90, 54};
 
     // lambda struct
-    lam = {"LAM", "0.94", DDU_PURPLE, centerX-55+110+16+58+16, 15+54+25, 90, 54};
+    lam = {"LAM", lamVal, DDU_PURPLE, centerX-55+110+16+58+16, 15+54+25, 90, 54};
 
     // battery struct
     batt.numOfVals = 2;
@@ -192,8 +206,8 @@ void initStructs()
     batt.posY = 15+54+25 + 54 + 25;
     batt.sizeX = 58+16+90;
     batt.sizeY = 90;
-    struct value uBatt = {"VOLT", "16.8"};
-    struct value tBatt = {"TEMP", "28"};
+    struct value uBatt = {"VOLT", uBattVal};
+    struct value tBatt = {"TEMP", tBattVal};
     batt.values[0] = uBatt;
     batt.values[1] = tBatt;
     batt.values[2] = nullvalue;
@@ -254,7 +268,7 @@ void generateData()
     }
 
     data.tc = random(0, 12);
-    data.lambda = random(8, 13) / 10.0f;
+    data.lambda = random(80, 130) / 100.0f;
     data.uBatt = random(132, 168) / 10.0f;
     data.tBatt = min(tEnv + random(0, 15), (unsigned long)39);
 
@@ -271,11 +285,11 @@ void generateData()
 
     // fill single value structs
     sprintf(rpm.value, "%d", data.n);
-    sprintf(ath.value, "%00.0f", data.ath);
+    sprintf(ath.value, "%00.1f", data.ath);
     sprintf(engineMap.value, "%d", data.map);
     sprintf(tc.value, "%d", data.tc);
     mode.value = data.mode;
-    sprintf(lam.value, "%0.00f", data.lambda);
+    sprintf(lam.value, "%0.2f", data.lambda);
 }
 
 // writes the values in data struct to their places on the screen
@@ -387,12 +401,17 @@ void drawValueName(int posX, int posY, char* name, int color)
 void drawValueRight(int posX, int posY, char* value)
 {
     // draw value at the specified position, aligned to the right
-    int X = posX - strlen(value) * FRAMEVALUEWIDTHFACTOR;
+    int X = posX - (strlen(value) * FRAMEVALUEWIDTHFACTOR) - ((strlen(value)-1) * FRAMEVALUESIZE);
     int Y = posY - (FRAMEVALUEHEIGHT / 2);
     screen->setCursor(X, Y);
     screen->setTextColor(DDU_WHITE);
     screen->setTextSize(FRAMEVALUESIZE);
     screen->print(value);
+
+#ifdef DEBUG
+    screen->drawRect(X + 1*FRAMEVALUEWIDTHFACTOR, Y+10, 3, 3, MAGENTA);
+    screen->drawRect(X, Y, (strlen(value)*FRAMEVALUEWIDTHFACTOR)+((strlen(value)-1)*FRAMEVALUESIZE), FRAMEVALUEHEIGHT, MAGENTA);
+#endif // ifdef DEBUG
 }
 
 void drawValueCentered(int posX, int posY, char* value)
@@ -414,8 +433,8 @@ void drawFrame(struct frame f)
     drawFrameLineWidth(f.posX, f.posY, f.sizeX, f.sizeY, FRAMERADIUS, FRAMELINEWIDTH, f.color);
 
     // draw title, value names and values
-    // drawFrameTitle(f.posX, f.posY, f.sizeX, f.sizeY, f.title);
-    // drawValueNamesAndValues(f);
+    drawFrameTitle(f.posX, f.posY, f.sizeX, f.sizeY, f.title);
+    drawValueNamesAndValues(f);
 }
 
 void drawValueFrame(struct valueFrame vF)
@@ -444,7 +463,6 @@ void drawGear(char c)
     const int posX = DDU_WIDTH/2 - width/2;
     const int posY = DDU_HEIGHT/2 - height/2 + offsetY;
     
-    // TODO draw gear character with proper font
     screen->setCursor(posX, posY);
     screen->setTextColor(DDU_WHITE);
     screen->setTextSize(10);

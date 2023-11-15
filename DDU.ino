@@ -3,6 +3,7 @@
 #include <stdint-gcc.h>
 #include "DDU.h"
 #include "Splashscreen.h"
+#include "Phallus.h"
 
 
 Arduino_ESP32RGBPanel *bus = new Arduino_ESP32RGBPanel(
@@ -216,8 +217,6 @@ void initStructs()
 // generates random values, updates data struct
 void generateData()
 {
-    // TODO Eastereggs einbauen
-
     // calculate random data
     struct Data data;
 
@@ -457,12 +456,21 @@ void drawValueFrame(struct valueFrame vF)
 
 void drawGear(char c)
 {
+
     const int width = 50;
     const int height = 70;
     const int offsetY = -10;
     const int posX = DDU_WIDTH/2 - width/2;
     const int posY = DDU_HEIGHT/2 - height/2 + offsetY;
     
+    // EASTEREGG chance of phallus instead of gear indicator
+    if (random(99) <= CHANCE_OF_PHALLUS-1)
+    {
+        screen->drawBitmap(DDU_WIDTH/2-phallus.width/2, DDU_HEIGHT/2+offsetY-phallus.height/2+5,
+        phallus.pixel_data, phallus.width, phallus.height, DDU_WHITE);
+        return;
+    }
+
     screen->setCursor(posX, posY);
     screen->setTextColor(DDU_WHITE);
     screen->setTextSize(10);

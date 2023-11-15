@@ -47,8 +47,7 @@ void Arduino_RPi_DPI_RGBPanel::writeFastVLine(int16_t x, int16_t y,
                                               int16_t h, uint16_t color)
 {
     x = WIDTH-x;
-    y = HEIGHT-y;
-    h = -h;
+    y = HEIGHT-y-h;
     if (_ordered_in_range(x, 0, _max_x) && h)
     { // X on screen, nonzero height
         if (h < 0)
@@ -98,9 +97,8 @@ void Arduino_RPi_DPI_RGBPanel::writeFastVLine(int16_t x, int16_t y,
 void Arduino_RPi_DPI_RGBPanel::writeFastHLine(int16_t x, int16_t y,
                                               int16_t w, uint16_t color)
 {
-    x = WIDTH-x;
+    x = WIDTH-x-w;
     y = HEIGHT-y;
-    w = -w;
     if (_ordered_in_range(y, 0, _max_y) && w)
     { // Y on screen, nonzero width
         if (w < 0)

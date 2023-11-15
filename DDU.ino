@@ -110,7 +110,7 @@ char tBattVal[3] =  "28";
 
 void setup(void)
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     // disable backlight
     pinMode(TFT_BL, OUTPUT);
@@ -119,10 +119,6 @@ void setup(void)
     // init screen and draw background
     screen->begin();
     screen->fillScreen(DDU_BACKGROUND);
-
-    // TODO1 test: rotate screen and flush buffer
-    // screen->setRotation(2);
-    // screen->flush();
 
     // define frame positions, colors etc.
     initStructs();
@@ -315,30 +311,6 @@ void refreshDisplay()
     drawFrame(temp);
     drawFrame(pres);
     drawFrame(batt);
-
-    // TODO1 get frame buffer, rotate, write back and turn backlight on again
-    // uint16_t* buff = screen->getFramebuffer();
-    
-    // screen->draw16bitBeRGBBitmap(0, 0, rotateBuffer(buff), DDU_WIDTH, DDU_HEIGHT);
-    screen->flush();
-}
-
-uint16_t* rotateBuffer(uint16_t* buff)
-{
-    uint32_t len = sizeof(buff)/sizeof(buff[0]);
-    uint16_t out[len];
-    uint32_t outpos = 0;
-    int w = DDU_WIDTH;
-    int h = DDU_HEIGHT;
-
-    for(int y = 0; y < h; y++)
-    {
-        outpos = len - (w * y);
-        for(int x = 0; x < w; x++)
-        {
-            out[outpos-x] = buff[y+x];
-        }
-    }
 }
 
 void drawFrameTitle(int posX, int posY, int sizeX, int sizeY, char* title)

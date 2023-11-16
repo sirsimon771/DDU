@@ -36,6 +36,8 @@ void drawValueName(int, int, char*, int);
 void drawValueRight(int, int, char*);
 void drawValueCentered(int, int, char*);
 
+// LED GPIOs
+int leds[] = LEDPINS;
 
 // holds all the data
 struct Data{
@@ -126,6 +128,13 @@ void setup(void)
     // enable backlight
     delay(100);
     digitalWrite(TFT_BL, HIGH);
+
+    // enable GPIO LEDs
+    for(int i = 0; i < LEDSNUM; i++)
+    {
+        pinMode(leds[i], OUTPUT);
+        analogWrite(leds[i], LEDDUTYCYCLE);
+    }
 
     // show FSTW logo at startup
     drawSplashScreen();

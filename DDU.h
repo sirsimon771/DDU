@@ -46,6 +46,10 @@
 #define FRAMEVALUEWIDTHFACTOR (FRAMEVALUESIZE * CHARWIDTH)
 #define FRAMEVALUEHEIGHT (FRAMEVALUESIZE * CHARHEIGHT)
 
+// GPIO LED settings
+#define LEDSNUM         4
+#define LEDPINS         {17, 18, 19, 20}
+#define LEDDUTYCYCLE    255
 
 // EASTEREGG probabilities in %
 #define CHANCE_OF_PHALLUS   1

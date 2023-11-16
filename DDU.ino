@@ -333,8 +333,6 @@ void drawFrameTitle(int posX, int posY, int sizeX, int sizeY, char* title)
     screen->fillRect(boxX+boxW-FRAMETITLEBACKGROUNDOFFSET-1, posY, FRAMETITLEBACKGROUNDOFFSET, FRAMETITLEBACKGROUNDOFFSET, DDU_YELLOW);
 #endif // ifdef DEBUG
 
-    // TODO3 maybe draw small ellipses at the open frame ends around the title?
-
     // print title text
     screen->setCursor(textposX, textposY);
     screen->setTextColor(DDU_WHITE);

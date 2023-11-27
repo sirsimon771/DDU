@@ -19,6 +19,10 @@
 // backlight GPIO
 #define TFT_BL          2
 
+// neopixel defines
+#define LEDPIN          17
+#define NUMPIXELS       20  // TODO how many nepixels?
+
 // display resolution
 #define DDU_WIDTH       480
 #define DDU_HEIGHT      272
@@ -45,11 +49,6 @@
 #define FRAMEVALUESIZE  3
 #define FRAMEVALUEWIDTHFACTOR (FRAMEVALUESIZE * CHARWIDTH)
 #define FRAMEVALUEHEIGHT (FRAMEVALUESIZE * CHARHEIGHT)
-
-// GPIO LED settings
-#define LEDSNUM         4
-#define LEDPINS         {17, 18, 19, 20}
-#define LEDDUTYCYCLE    255
 
 // EASTEREGG probabilities in %
 #define CHANCE_OF_PHALLUS   1

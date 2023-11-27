@@ -4,6 +4,7 @@
 #include "DDU.h"
 #include "Splashscreen.h"
 #include "Phallus.h"
+#include <Adafruit_NeoPixel.h>
 
 
 Arduino_ESP32RGBPanel *bus = new Arduino_ESP32RGBPanel(
@@ -20,6 +21,7 @@ Arduino_RPi_DPI_RGBPanel *screen = new Arduino_RPi_DPI_RGBPanel(
   272 /* height */, 0 /* vsync_polarity */, 8 /* vsync_front_porch */, 4 /* vsync_pulse_width */, 12 /* vsync_back_porch */,
   1 /* pclk_active_neg */, 9000000 /* prefer_speed */, true /* auto_flush */);
 
+Adafruit_NeoPixel pixels(NUMPIXELS, LEDPIN, NEO_GRB + NEO_KHZ800);
 
 
 // function prototypes
@@ -35,9 +37,8 @@ void drawFrameTitle(int , int, int, int, char*);
 void drawValueName(int, int, char*, int);
 void drawValueRight(int, int, char*);
 void drawValueCentered(int, int, char*);
+void writeLEDs();
 
-// LED GPIOs
-int leds[] = LEDPINS;
 
 // holds all the data
 struct Data{
@@ -129,12 +130,8 @@ void setup(void)
     delay(100);
     digitalWrite(TFT_BL, HIGH);
 
-    // enable GPIO LEDs
-    for(int i = 0; i < LEDSNUM; i++)
-    {
-        pinMode(leds[i], OUTPUT);
-        analogWrite(leds[i], LEDDUTYCYCLE);
-    }
+    // init neopixels
+    pixels.begin();
 
     // show FSTW logo at startup
     drawSplashScreen();
@@ -300,6 +297,7 @@ void generateData()
 void refreshDisplay()
 {
     screen->fillScreen(DDU_BACKGROUND);
+    pixels.clear();
 
 #ifdef DEBUG
     // center crosshair
@@ -320,6 +318,9 @@ void refreshDisplay()
     drawFrame(temp);
     drawFrame(pres);
     drawFrame(batt);
+
+    // write neopixels
+    writeLEDs();
 }
 
 void drawFrameTitle(int posX, int posY, int sizeX, int sizeY, char* title)
@@ -501,4 +502,10 @@ void drawSplashScreen()
     delay(DDU_SPLASH_MS);
     screen->fillScreen(DDU_BACKGROUND);
     delay(300);
+}
+
+void writeLEDs()
+{
+    // TODO write LED colors, brightness
+    // TODO3 shiftlight based on rpm maybe?
 }

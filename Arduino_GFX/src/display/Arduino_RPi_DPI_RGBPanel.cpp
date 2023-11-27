@@ -141,8 +141,8 @@ void Arduino_RPi_DPI_RGBPanel::writeFastHLine(int16_t x, int16_t y,
 void Arduino_RPi_DPI_RGBPanel::writeFillRectPreclipped(int16_t x, int16_t y,
                                                        int16_t w, int16_t h, uint16_t color)
 {
-    x = WIDTH-x-w;
-    y = HEIGHT-y-h;
+    x = WIDTH-x-w+1;
+    y = HEIGHT-y-h+1;
 
     uint16_t *row = _framebuffer;
     row += y * _width;

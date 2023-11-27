@@ -27,8 +27,8 @@
 #define DDU_WIDTH       480
 #define DDU_HEIGHT      272
 
-#define DDU_REFRESH_MS  500
-#define DDU_SPLASH_MS   500
+#define DDU_REFRESH_MS  5000
+#define DDU_SPLASH_MS   1500
 
 // geometric settings
 #define FRAMELINEWIDTH  3
@@ -43,7 +43,7 @@
 #define FRAMETITLEWIDTHFACTOR (FRAMETITLESIZE * CHARWIDTH)
 #define FRAMETITLEHEIGHT (FRAMETITLESIZE * CHARHEIGHT)
 #define FRAMETITLEBACKGROUNDOFFSET 5
-#define FRAMEPADDING    8
+#define FRAMEPADDING    10
 
 // frame value text options
 #define FRAMEVALUESIZE  3

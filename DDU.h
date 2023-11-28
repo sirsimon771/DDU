@@ -19,10 +19,6 @@
 // backlight GPIO
 #define TFT_BL          2
 
-// neopixel defines
-#define LEDPIN          17
-#define NUMPIXELS       20  // TODO how many nepixels?
-
 // display resolution
 #define DDU_WIDTH       480
 #define DDU_HEIGHT      272

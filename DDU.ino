@@ -21,7 +21,9 @@ Arduino_RPi_DPI_RGBPanel *screen = new Arduino_RPi_DPI_RGBPanel(
   272 /* height */, 0 /* vsync_polarity */, 8 /* vsync_front_porch */, 4 /* vsync_pulse_width */, 12 /* vsync_back_porch */,
   1 /* pclk_active_neg */, 9000000 /* prefer_speed */, true /* auto_flush */);
 
-Adafruit_NeoPixel pixels(NUMPIXELS, LEDPIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel leds_left(5, 17, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel leds_right(5, 20, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel leds_top(14, 19, NEO_GRB + NEO_KHZ800);
 
 
 // function prototypes
@@ -131,7 +133,9 @@ void setup(void)
     digitalWrite(TFT_BL, HIGH);
 
     // init neopixels
-    pixels.begin();
+    leds_left.begin();
+    leds_right.begin();
+    leds_top.begin();
 
     // show FSTW logo at startup
     drawSplashScreen();
@@ -297,7 +301,16 @@ void generateData()
 void refreshDisplay()
 {
     screen->fillScreen(DDU_BACKGROUND);
-    pixels.clear();
+    leds_left.clear();
+    leds_right.clear();
+    leds_top.clear();
+    uint32_t ledcolor = leds_left.Color(255,0,0);
+    leds_left.fill(ledcolor);
+    leds_left.show();
+    leds_right.fill(ledcolor);
+    leds_right.show();
+    leds_top.fill(ledcolor);
+    leds_top.show();
 
 #ifdef DEBUG
     // center crosshair

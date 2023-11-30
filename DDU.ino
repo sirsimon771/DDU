@@ -41,6 +41,17 @@ void drawValueRight(int, int, char*);
 void drawValueCentered(int, int, char*);
 void writeLEDs();
 
+// LED colors definition
+const int ledcolors_num = 7;
+const uint32_t ledcolors[] = {
+    leds_left.color(255, 000, 000),     // red
+    leds_left.color(000, 255, 000),     // green
+    leds_left.color(000, 000, 255),     // blue
+    leds_left.color(180, 000, 220),     // purple
+    leds_left.color(000, 190, 255),     // cyan
+    leds_left.color(255, 130, 000),     // orange
+    leds_left.color(250, 240, 000),     // yellow
+};
 
 // holds all the data
 struct Data{
@@ -301,16 +312,6 @@ void generateData()
 void refreshDisplay()
 {
     screen->fillScreen(DDU_BACKGROUND);
-    leds_left.clear();
-    leds_right.clear();
-    leds_top.clear();
-    uint32_t ledcolor = leds_left.Color(255,0,0);
-    leds_left.fill(ledcolor);
-    leds_left.show();
-    leds_right.fill(ledcolor);
-    leds_right.show();
-    leds_top.fill(ledcolor);
-    leds_top.show();
 
 #ifdef DEBUG
     // center crosshair
@@ -519,6 +520,13 @@ void drawSplashScreen()
 
 void writeLEDs()
 {
-    // TODO write LED colors, brightness
-    // TODO3 shiftlight based on rpm maybe?
+    uint32_t ledcolor = ledcolors[random(ledcolors_num)];
+
+    leds_left.fill(ledcolor);
+    leds_right.fill(ledcolor);
+    leds_top.fill(ledcolor);
+
+    leds_left.show();
+    leds_right.show();
+    leds_top.show();
 }
